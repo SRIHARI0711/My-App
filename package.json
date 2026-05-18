@@ -1,0 +1,17 @@
+{
+  "name": "devops-lab-app",
+  "version": "1.0.0",
+  "description": "Simple Node.js app for Jenkins CI/CD lab",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "lint": "eslint .",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.17.0"
+  }
+}
