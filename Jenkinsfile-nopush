@@ -7,7 +7,7 @@ pipeline {
     }
 
     environment {
-        IMAGE_NAME = 'YOUR_DOCKERHUB_USERNAME/devops-lab-app'
+        IMAGE_NAME = 'srihari0711/devops-lab-app'
         IMAGE_TAG   = 'latest'
     }
 
