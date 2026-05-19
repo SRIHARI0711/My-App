@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+
+    options {
+        timestamps()
+        disableConcurrentBuilds()
+    }
+
+    environment {
+        IMAGE_NAME = 'YOUR_DOCKERHUB_USERNAME/devops-lab-app'
+        IMAGE_TAG   = 'latest'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                bat 'npm install'
+            }
+        }
+
+        stage('Code Quality - ESLint') {
+            steps {
+                bat 'if not exist reports mkdir reports'
+                bat 'npx eslint . > reports\\eslint-report.txt'
+            }
+        }
+
+        stage('Trivy File Scan') {
+            steps {
+                bat 'trivy fs --scanners vuln,secret,misconfig --format table --output reports\\trivy-fs-report.txt .'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                bat 'docker build -t %IMAGE_NAME%:%IMAGE_TAG% .'
+            }
+        }
+
+        stage('Trivy Image Scan') {
+            steps {
+                bat 'trivy image --severity HIGH,CRITICAL --format table --output reports\\trivy-image-report.txt %IMAGE_NAME%:%IMAGE_TAG%'
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'reports/**', allowEmptyArchive: true
+        }
+    }
+}
